@@ -1,7 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { MoviesService } from './movies.service';
+import { CreateMovieDto } from './dto/create-movie.dto';
+import { UpdateMovieDto } from './dto/update-movie.dto';
 
 @Controller('movies')
+@UseInterceptors(ClassSerializerInterceptor)
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
@@ -19,17 +22,17 @@ export class MoviesController {
 
   @Post()
   postMovie(
-    @Body('title') title: string
+    @Body() body: CreateMovieDto
   ) {
-    return this.moviesService.createMovie(title);
+    return this.moviesService.createMovie(body);
   }
 
   @Patch(':id')
   patchMovie(
     @Param('id') id: string,
-    @Body('title') title: string
+    @Body() body: UpdateMovieDto
   ) {
-    return this.moviesService.updateMovie(+id, title);
+    return this.moviesService.updateMovie(+id, body);
   }
 
   @Delete(':id')
