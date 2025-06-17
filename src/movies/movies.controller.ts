@@ -12,19 +12,19 @@ export class MoviesController {
   getMovies(
     @Query('title') title ?: string
   ) {
-    return this.moviesService.getManyMovies(title);
+    return this.moviesService.findAll(title);
   }
 
   @Get(':id')
   getMovie(@Param('id') id: string) {
-      return this.moviesService.getMoiveById(+id);
+      return this.moviesService.findOne(+id);
   }
 
   @Post()
   postMovie(
     @Body() body: CreateMovieDto
   ) {
-    return this.moviesService.createMovie(body);
+    return this.moviesService.create(body);
   }
 
   @Patch(':id')
@@ -32,11 +32,11 @@ export class MoviesController {
     @Param('id') id: string,
     @Body() body: UpdateMovieDto
   ) {
-    return this.moviesService.updateMovie(+id, body);
+    return this.moviesService.update(+id, body);
   }
 
   @Delete(':id')
   deleteMoive(@Param('id') id: string) {
-    return this.moviesService.deleteMovie(+id);
+    return this.moviesService.remove(+id);
   }
 }

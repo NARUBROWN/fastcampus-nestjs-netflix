@@ -6,6 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { Movie } from './movies/entites/movie.entity';
+import { MovieDetail } from './movies/entites/movie-detail.entity';
+import { DirectorsModule } from './directors/directors.module';
+import { Director } from './directors/entites/director.entity';
 
 @Module({
   imports: [
@@ -30,13 +33,14 @@ import { Movie } from './movies/entites/movie.entity';
           password: configService.get<string>('DB_PASSWORD'),
           database: configService.get<string>('DB_DATABASE'),
           entities: [
-            Movie
+            Movie, MovieDetail, Director
           ],
           synchronize: true
         }),
         inject: [ConfigService]
     }),
-    MoviesModule
+    MoviesModule,
+    DirectorsModule
   ],
   controllers: [AppController],
   providers: [AppService],

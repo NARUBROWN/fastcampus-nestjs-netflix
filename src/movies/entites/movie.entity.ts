@@ -1,7 +1,13 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, VersionColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn, VersionColumn } from "typeorm";
+import { BaseTable } from "../../commons/entites/base-table.entity";
+import { MovieDetail } from "./movie-detail.entity";
+import { Director } from "src/directors/entites/director.entity";
+
+
+
 
 @Entity()
-export class Movie {
+export class Movie extends BaseTable {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -11,12 +17,22 @@ export class Movie {
   @Column()
   genre: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @OneToOne(
+    () => MovieDetail,
+    moviedetail => moviedetail.id,
+    {
+      cascade: true
+    }
+  )
+  @JoinColumn()
+  detail: MovieDetail;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @VersionColumn()
-  version: number;
+  @ManyToOne(
+    () => Director,
+    director => director.movies,
+    {
+      cascade: true
+    }
+  )
+  director: Director;
 }
