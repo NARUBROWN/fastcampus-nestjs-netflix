@@ -9,6 +9,8 @@ import { Movie } from './movies/entites/movie.entity';
 import { MovieDetail } from './movies/entites/movie-detail.entity';
 import { DirectorsModule } from './directors/directors.module';
 import { Director } from './directors/entites/director.entity';
+import { GenresModule } from './genres/genres.module';
+import { Genre } from './genres/entities/genre.entity';
 
 @Module({
   imports: [
@@ -33,14 +35,15 @@ import { Director } from './directors/entites/director.entity';
           password: configService.get<string>('DB_PASSWORD'),
           database: configService.get<string>('DB_DATABASE'),
           entities: [
-            Movie, MovieDetail, Director
+            Movie, MovieDetail, Director, Genre
           ],
           synchronize: true
         }),
         inject: [ConfigService]
     }),
     MoviesModule,
-    DirectorsModule
+    DirectorsModule,
+    GenresModule
   ],
   controllers: [AppController],
   providers: [AppService],
