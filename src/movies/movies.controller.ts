@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, ClassSerializerInterceptor, ParseIntPipe } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
+import { MovieTitleValidationPiep } from './pipes/movie-title-validation.pipe';
 
 @Controller('movies')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -10,14 +11,14 @@ export class MoviesController {
 
   @Get()
   getMovies(
-    @Query('title') title ?: string
+    @Query('title', MovieTitleValidationPiep) title ?: string
   ) {
     return this.moviesService.findAll(title);
   }
 
   @Get(':id')
-  getMovie(@Param('id') id: string) {
-      return this.moviesService.findOne(+id);
+  getMovie(@Param('id', ParseIntPipe) id: number) {
+      return this.moviesService.findOne(id);
   }
 
   @Post()
@@ -29,14 +30,14 @@ export class MoviesController {
 
   @Patch(':id')
   patchMovie(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateMovieDto
   ) {
-    return this.moviesService.update(+id, body);
+    return this.moviesService.update(id, body);
   }
 
   @Delete(':id')
-  deleteMoive(@Param('id') id: string) {
-    return this.moviesService.remove(+id);
+  deleteMoive(@Param('id', ParseIntPipe) id: number) {
+    return this.moviesService.remove(id);
   }
 }
