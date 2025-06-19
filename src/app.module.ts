@@ -11,6 +11,9 @@ import { DirectorsModule } from './directors/directors.module';
 import { Director } from './directors/entites/director.entity';
 import { GenresModule } from './genres/genres.module';
 import { Genre } from './genres/entities/genre.entity';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -35,7 +38,7 @@ import { Genre } from './genres/entities/genre.entity';
           password: configService.get<string>('DB_PASSWORD'),
           database: configService.get<string>('DB_DATABASE'),
           entities: [
-            Movie, MovieDetail, Director, Genre
+            Movie, MovieDetail, Director, Genre, User
           ],
           synchronize: true
         }),
@@ -43,7 +46,9 @@ import { Genre } from './genres/entities/genre.entity';
     }),
     MoviesModule,
     DirectorsModule,
-    GenresModule
+    GenresModule,
+    AuthModule,
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService],
