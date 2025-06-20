@@ -1,8 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, ClassSerializerInterceptor, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, ClassSerializerInterceptor, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { MovieTitleValidationPiep } from './pipes/movie-title-validation.pipe';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { Public } from 'src/auth/decorator/public.decorator';
+import { RBAC } from 'src/auth/decorator/rbac.decorator';
+import { Role } from 'src/users/entities/user.entity';
 
 @Controller('movies')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -10,17 +14,20 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @Get()
+  @Public()
   getMovies(
     @Query('title', MovieTitleValidationPiep) title ?: string
   ) {
     return this.moviesService.findAll(title);
   }
 
+  @Public()
   @Get(':id')
   getMovie(@Param('id', ParseIntPipe) id: number) {
       return this.moviesService.findOne(id);
   }
 
+  @RBAC(Role.admin)
   @Post()
   postMovie(
     @Body() body: CreateMovieDto
