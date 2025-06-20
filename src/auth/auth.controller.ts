@@ -19,11 +19,9 @@ export class AuthController {
   }
 
   @Post('token/access')
-  async retateAccessToken(@Headers('authorization') token: string) {
-    const payload = await this.authService.parseBearerToken(token, true);
-
+  async retateAccessToken(@Request() req: any) {
     return {
-      accessToken: await this.authService.issueToken(payload, false)
+      accessToken: await this.authService.issueToken(req.user, false)
     }
   }
 
