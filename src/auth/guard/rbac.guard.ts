@@ -12,9 +12,6 @@ export class RBACGuard implements CanActivate {
 
     canActivate(context: ExecutionContext): boolean {
         const role: Role = this.reflector.get<Role>(RBAC, context.getHandler()) ?? this.reflector.get<Role>(RBAC, context.getClass());
-        
-        console.log(role);
-
     
         if (!Object.values(Role).includes(role)) {
             return true;

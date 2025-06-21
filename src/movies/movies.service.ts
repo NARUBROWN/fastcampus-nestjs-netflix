@@ -7,6 +7,7 @@ import { DataSource, In, InsertResult, Like, Not, Repository } from 'typeorm';
 import { MovieDetail } from './entites/movie-detail.entity';
 import { Director } from 'src/directors/entites/director.entity';
 import { Genre } from 'src/genres/entities/genre.entity';
+import { GetMoviesDto } from './dto/get-moives.dto';
 
 
 
@@ -25,13 +26,23 @@ export class MoviesService {
     private readonly dataSource: DataSource
   ) {}
 
-  async findAll(title?: string) {
+  async findAll(dto: GetMoviesDto) {
+    const {title, take, page} = dto;
+
+    console.log(take, page);
+
     const qb = await this.movieRepository.createQueryBuilder('movie')
     .leftJoinAndSelect('movie.director', 'director')
     .leftJoinAndSelect('movie.genres', 'genres');
 
     if (title) {
       qb.where('movie.title LIKE :title', { title: `%${title}%` });
+    }
+
+    if (take && page) {
+      const skip = (page - 1) * take;
+      qb.take(take);
+      qb.skip(skip);
     }
 
     return await qb.getManyAndCount();
