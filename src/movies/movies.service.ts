@@ -31,8 +31,6 @@ export class MoviesService {
   async findAll(dto: GetMoviesDto) {
     const {title, take, page} = dto;
 
-    console.log(take, page);
-
     const qb = await this.movieRepository.createQueryBuilder('movie')
     .leftJoinAndSelect('movie.director', 'director')
     .leftJoinAndSelect('movie.genres', 'genres');

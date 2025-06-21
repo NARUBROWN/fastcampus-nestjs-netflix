@@ -12,6 +12,6 @@ export class CommonService {
         const skip = (page - 1) * take;
         qb.take(take);
         qb.skip(skip);
-    }
+        }
     }
 }
