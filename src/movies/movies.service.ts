@@ -8,6 +8,7 @@ import { MovieDetail } from './entites/movie-detail.entity';
 import { Director } from 'src/directors/entites/director.entity';
 import { Genre } from 'src/genres/entities/genre.entity';
 import { GetMoviesDto } from './dto/get-moives.dto';
+import { CommonService } from 'src/commons/entites/common.service';
 
 
 
@@ -23,7 +24,8 @@ export class MoviesService {
     private readonly directorRepository: Repository<Director>,
     @InjectRepository(Genre)
     private readonly genreRepository: Repository<Genre>,
-    private readonly dataSource: DataSource
+    private readonly dataSource: DataSource,
+    private readonly commonService: CommonService
   ) {}
 
   async findAll(dto: GetMoviesDto) {
@@ -40,9 +42,7 @@ export class MoviesService {
     }
 
     if (take && page) {
-      const skip = (page - 1) * take;
-      qb.take(take);
-      qb.skip(skip);
+      this.commonService.applyPagePaginationParamsToQb<Movie>(qb, dto);
     }
 
     return await qb.getManyAndCount();

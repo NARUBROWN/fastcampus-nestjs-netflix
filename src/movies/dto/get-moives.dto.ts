@@ -1,7 +1,7 @@
 import { IsIn, IsInt, IsOptional, IsString } from "class-validator";
-import { PaginationDto } from "src/commons/entites/dto/pagination.dto";
+import { PagePaginationDto } from "src/commons/entites/dto/page-pagination.dto";
 
-export class GetMoviesDto extends PaginationDto {
+export class GetMoviesDto extends PagePaginationDto {
     @IsString()
     @IsOptional()
     title?: string
