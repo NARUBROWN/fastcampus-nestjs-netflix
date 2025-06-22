@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ObjectLiteral, SelectQueryBuilder } from "typeorm";
 import { PagePaginationDto } from "./dto/page-pagination.dto";
+import { CursorPainationDto } from "src/movies/dto/cusor-pagination.dto";
 
 @Injectable()
 export class CommonService {
@@ -13,5 +14,18 @@ export class CommonService {
         qb.take(take);
         qb.skip(skip);
         }
+    }
+
+    applyCursorPaginationParamsToQ<T extends ObjectLiteral>(qb: SelectQueryBuilder<T>, dto: CursorPainationDto) {
+        const { order, id, take } = dto;
+
+        if (id) {
+            const direction = order === 'ASC' ? '>' : '<';
+
+            qb.where(`${qb.alias}.id ${direction} :id`, {id});
+        }
+
+        qb.orderBy(`${qb.alias}.id`, order);
+        qb.take(take);
     }
 }
