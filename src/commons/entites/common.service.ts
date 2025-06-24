@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { ObjectLiteral, SelectQueryBuilder } from "typeorm";
 import { PagePaginationDto } from "./dto/page-pagination.dto";
-import { CursorPainationDto } from "src/movies/dto/cusor-pagination.dto";
+import { CursorPainationDto } from "src/commons/entites/dto/cusor-pagination.dto";
 
 @Injectable()
 export class CommonService {
@@ -16,16 +16,49 @@ export class CommonService {
         }
     }
 
-    applyCursorPaginationParamsToQ<T extends ObjectLiteral>(qb: SelectQueryBuilder<T>, dto: CursorPainationDto) {
-        const { order, id, take } = dto;
+    async applyCursorPaginationParamsToQ<T extends ObjectLiteral>(qb: SelectQueryBuilder<T>, dto: CursorPainationDto) {
+        const { order, cursor, take } = dto;
 
-        if (id) {
-            const direction = order === 'ASC' ? '>' : '<';
-
-            qb.where(`${qb.alias}.id ${direction} :id`, {id});
+        if (cursor) {
+            
         }
 
-        qb.orderBy(`${qb.alias}.id`, order);
+        for(let i = 0; i < order.length; i++) {
+            const [column, direction] = order[i].split('_');
+
+            if (direction !== 'ASC' && direction !== 'DESC') {
+                throw new BadRequestException('Order는 ASC 또는 DESC으로 입력해주세요');
+            }
+
+            if (i == 0) {
+                qb.orderBy(`${qb.alias}.${column}`, direction);
+            } else {
+                qb.orderBy(`${qb.alias}.${column}`, direction);
+            }
+        }
+
         qb.take(take);
+
+        const result = await qb.getMany();
+
+        const nextCursor = this.generateNextCursor(result, order);
+
+        return {qb, nextCursor};
+    }
+
+    generateNextCursor<T>(results: T[], order: string[]): string | null {
+        if (results.length === 0) return null;
+
+        const lastItem = results[results.length - 1];
+        const values = {};
+
+        order.forEach((columnOrder) => {
+            const [column] = columnOrder.split('_');
+            values[column] = lastItem[column];
+        });
+        const cursorObj = {values, order};
+        const nextCursor = Buffer.from(JSON.stringify(cursorObj)).toString('base64');
+        
+        return nextCursor;
     }
 }

@@ -40,10 +40,14 @@ export class MoviesService {
     }
 
     
-    this.commonService.applyCursorPaginationParamsToQ<Movie>(qb, dto);
-    
+   const {nextCursor} = await this.commonService.applyCursorPaginationParamsToQ<Movie>(qb, dto);
+    const [data, count] = await qb.getManyAndCount();
 
-    return await qb.getManyAndCount();
+    return {
+      data,
+      nextCursor,
+      count
+    }
   }
 
   async findOne(id: number) {
