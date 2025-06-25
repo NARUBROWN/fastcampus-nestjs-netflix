@@ -17,10 +17,22 @@ export class CommonService {
     }
 
     async applyCursorPaginationParamsToQ<T extends ObjectLiteral>(qb: SelectQueryBuilder<T>, dto: CursorPainationDto) {
-        const { order, cursor, take } = dto;
+        let { order, cursor, take } = dto;
 
         if (cursor) {
+            const decodedCursor = Buffer.from(cursor, 'base64').toString('utf-8');
+            const cursorObj = JSON.parse(decodedCursor);
+
+            order = cursorObj.order;
+
+            const { values } = cursorObj;
+
+            const columns = Object.keys(values);
+            const comparisonOperator = order.some((o) => o.endsWith('DESC')) ? '<' : '>';
+            const whereConditions = columns.map(c => `${qb.alias}.${c}`).join(',');
+            const whereParams = columns.map(c => `:${c}`).join(',');
             
+            qb.where(`(${whereConditions}) ${comparisonOperator} (${whereParams})`, values);
         }
 
         for(let i = 0; i < order.length; i++) {
