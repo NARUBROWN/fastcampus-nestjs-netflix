@@ -8,7 +8,7 @@ import { MovieDetail } from './entites/movie-detail.entity';
 import { Director } from 'src/directors/entites/director.entity';
 import { Genre } from 'src/genres/entities/genre.entity';
 import { GetMoviesDto } from './dto/get-moives.dto';
-import { CommonService } from 'src/commons/entites/common.service';
+import { CommonService } from 'src/commons/common.service';
 
 
 

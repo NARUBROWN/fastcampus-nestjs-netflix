@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { envVariables } from 'src/commons/entites/const/env.const';
+import { envVariables } from 'src/commons/const/env.const';
 
 @Injectable()
 export class AuthService {

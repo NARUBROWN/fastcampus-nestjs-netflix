@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NestMiddleware, UnauthorizedException 
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { NextFunction } from "express";
-import { envVariables } from "src/commons/entites/const/env.const";
+import { envVariables } from "src/commons/const/env.const";
 
 @Injectable()
 export class BearerTokenMiddleware implements NestMiddleware {
