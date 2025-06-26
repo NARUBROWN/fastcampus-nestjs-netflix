@@ -3,7 +3,7 @@ import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { Movie } from './entites/movie.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, InsertResult, Like, Not, Repository } from 'typeorm';
+import { DataSource, In, InsertResult, Like, Not, QueryRunner, Repository } from 'typeorm';
 import { MovieDetail } from './entites/movie-detail.entity';
 import { Director } from 'src/directors/entites/director.entity';
 import { Genre } from 'src/genres/entities/genre.entity';
@@ -65,14 +65,9 @@ export class MoviesService {
     return movie;
   }
 
-  async create(createMovieDto: CreateMovieDto) {
-    const qr = this.dataSource.createQueryRunner();
+  async create(createMovieDto: CreateMovieDto, qr: QueryRunner) {
     
-    await qr.connect();
-    await qr.startTransaction();
-
-    try {
-        const genres: Genre[] = await qr.manager.find(Genre, {
+      const genres: Genre[] = await qr.manager.find(Genre, {
         where: {
           id: In(createMovieDto.genreIds)
         }
@@ -121,21 +116,12 @@ export class MoviesService {
       .of(movieId)
       .add(genres.map(genres => genres.id));
 
-      await qr.commitTransaction();
-
-      return await this.movieRepository.findOne({
+      return await qr.manager.findOne(Movie, {
       where: {
         id: movieId
       },
       relations: ['detail', 'director', 'genres']
     });
-
-    } catch(e) {
-      await qr.rollbackTransaction();
-      throw e;
-    } finally {
-      await qr.release();
-    }
 
     
   }
