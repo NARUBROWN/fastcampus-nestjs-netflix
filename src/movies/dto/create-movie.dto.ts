@@ -1,5 +1,5 @@
+import { Type } from "class-transformer";
 import { ArrayNotEmpty, IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { Genre as number } from "src/genres/entities/genre.entity";
 
 export class CreateMovieDto {
     @IsNotEmpty()
@@ -21,5 +21,6 @@ export class CreateMovieDto {
             each: true
         }
     )
+    @Type(() => Number)
     genreIds: number[];
 }
