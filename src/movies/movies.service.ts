@@ -9,6 +9,7 @@ import { Director } from 'src/directors/entites/director.entity';
 import { Genre } from 'src/genres/entities/genre.entity';
 import { GetMoviesDto } from './dto/get-moives.dto';
 import { CommonService } from 'src/commons/common.service';
+import { join } from 'path';
 
 
 
@@ -65,7 +66,7 @@ export class MoviesService {
     return movie;
   }
 
-  async create(createMovieDto: CreateMovieDto, qr: QueryRunner) {
+  async create(createMovieDto: CreateMovieDto, movieFileName: string, qr: QueryRunner) {
     
       const genres: Genre[] = await qr.manager.find(Genre, {
         where: {
@@ -97,6 +98,8 @@ export class MoviesService {
 
       const movieDetailId = movieDetail.identifiers[0].id;
 
+      const movieFolder = join('public', 'movie');
+
       const movie = await qr.manager.createQueryBuilder()
       .insert()
       .into(Movie)
@@ -105,7 +108,8 @@ export class MoviesService {
         detail: {
           id: movieDetailId
         },
-        director
+        director,
+        movieFilePath: join(movieFolder, movieFileName)
       })
       .execute();
 

@@ -52,9 +52,7 @@ export class MoviesController {
     @Request() req,
     @UploadedFile() movie: Express.Multer.File
   ) {
-    console.log('-------------');
-    console.log(movie);
-    return this.moviesService.create(body, req.queryRunner);
+    return this.moviesService.create(body, movie.filename, req.queryRunner);
   }
 
   @Patch(':id')
